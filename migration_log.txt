@@ -1,0 +1,11 @@
+No config path provided, using default 'drizzle.config.ts'
+Reading config file 'E:\Veb Dev\SiteBuilder\builder\drizzle.config.ts'
+Using '@neondatabase/serverless' driver for database querying
+ Warning  '@neondatabase/serverless' can only connect to remote Neon/Vercel Postgres/Supabase instances through a websocket
+Error: No file drizzle/0000_init.sql found in drizzle folder
+    at readMigrationFiles (E:\Veb Dev\SiteBuilder\builder\node_modules\src\migrator.ts:55:10)
+    at migrate (E:\Veb Dev\SiteBuilder\builder\node_modules\src\neon-serverless\migrator.ts:9:21)
+    at migrateFn (E:\Veb Dev\SiteBuilder\builder\node_modules\drizzle-kit\bin.cjs:80821:18)
+    at Object.handler (E:\Veb Dev\SiteBuilder\builder\node_modules\drizzle-kit\bin.cjs:93764:11)
+    at async run (E:\Veb Dev\SiteBuilder\builder\node_modules\drizzle-kit\bin.cjs:93189:7)
+[Γú╖] applying migrations...
