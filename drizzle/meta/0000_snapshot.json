@@ -1,5 +1,5 @@
 {
-  "id": "37723f4e-094c-414f-b761-8e8fc3b576a3",
+  "id": "56920bdf-dd45-4d52-91d9-c67c0f7e9b0b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -31,6 +31,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "frameId": {
+          "name": "frameId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
         "createdBy": {
           "name": "createdBy",
           "type": "integer",
@@ -47,6 +53,19 @@
       },
       "indexes": {},
       "foreignKeys": {
+        "chats_frameId_frames_frameId_fk": {
+          "name": "chats_frameId_frames_frameId_fk",
+          "tableFrom": "chats",
+          "tableTo": "frames",
+          "columnsFrom": [
+            "frameId"
+          ],
+          "columnsTo": [
+            "frameId"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
         "chats_createdBy_users_id_fk": {
           "name": "chats_createdBy_users_id_fk",
           "tableFrom": "chats",
@@ -91,6 +110,12 @@
         "frameId": {
           "name": "frameId",
           "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "designCode": {
+          "name": "designCode",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },

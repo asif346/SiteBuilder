@@ -29,6 +29,25 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## Database (Neon + Drizzle)
+
+- **App** uses `drizzle-orm/neon-http` (see `config/db.ts`).
+- **CLI**: `npx drizzle-kit generate` (local), `npx drizzle-kit pull` / `npx drizzle-kit migrate` (need DB access).
+
+### If `drizzle-kit pull` or `migrate` times out (ETIMEDOUT)
+
+Your network is blocking or delaying outbound connections to Neon (both WebSocket and TCP to Neon’s IPs). Fix it from the network side:
+
+1. **Use another network** – e.g. mobile hotspot or different Wi‑Fi, then run:
+   ```bash
+   npx drizzle-kit pull    # introspect schema
+   npm run db:migrate      # apply migrations (if you have this script)
+   ```
+2. **Run from the cloud** – e.g. run migrations in CI (GitHub Actions, etc.) or from a Vercel build step where outbound access to Neon works.
+3. **Use Neon’s SQL Editor** – In [Neon Console](https://console.neon.tech) → SQL Editor, run your migration SQL (e.g. from `drizzle/*.sql`) or inspect tables and keep `config/schema.ts` in sync by hand.
+
+Your app may still work when deployed (e.g. on Vercel) because serverless runtimes often have different outbound access than your local machine.
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
