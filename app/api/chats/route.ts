@@ -1,15 +1,25 @@
-
 import { db } from "@/config/db";
 import { chatTable } from "@/config/schema";
 import { eq } from "drizzle-orm";
-import { NextRequest, NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server";
 
-export  async function PUT(req: NextResponse) {
-    const {messages, frameId} = await req.json();
+export async function PUT(req: NextRequest) {
+  try {
+    const { messages, frameId } = await req.json();
 
-    const result = await db.update(chatTable).set({
-        chatMessage: messages
-    }).where(eq(chatTable.frameId, frameId))
+    const result = await db
+      .update(chatTable)
+      .set({
+        chatMessage: messages,
+      })
+      .where(eq(chatTable.frameId, frameId));
 
-    return NextResponse.json({result: 'updated'})
+    return NextResponse.json({ result: "updated" });
+
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Update failed" },
+      { status: 500 }
+    );
+  }
 }
