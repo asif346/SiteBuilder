@@ -43,7 +43,8 @@ export async function POST(req: NextRequest) {
     // ✅ Save chat
     await db.insert(chatTable).values({
       chatMessage: messages,
-      createdBy: userId
+      createdBy: userId,
+      frameId: frameId
     });
 
     return NextResponse.json({

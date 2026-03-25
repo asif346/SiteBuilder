@@ -5,10 +5,11 @@ import { Button } from "@/components/ui/button";
 import { ArrowUp } from "lucide-react";
 type Props = {
   messages: Messages[];
-  onSend:any
+  onSend:any,
+  loading:boolean
 };
 
-export default function ChatSection({ messages, onSend }: Props) {
+export default function ChatSection({ messages, onSend, loading }: Props) {
   const [input, setInput] = useState<string>();
 
   const handleSend=()=>{
@@ -37,6 +38,11 @@ export default function ChatSection({ messages, onSend }: Props) {
             </div>
           ))
         )}
+        {loading && <div className="flex justify-center items-center p-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-zinc-800"></div>
+            <span className="ml-2 text-zinc-800">Thinking...</span>
+
+        </div>}
       </div>
 
       {/* footer input */}

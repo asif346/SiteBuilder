@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const frameId = searchParams.get("frameId");
+  const projectId = searchParams.get('projectId');
 
   if (!frameId?.trim()) {
     return NextResponse.json(
@@ -34,7 +35,7 @@ export async function GET(req: NextRequest) {
     }
 
     const finalResult = {
-      ...frame,
+      ...frameResult[0],
       chatMessages: chatResult[0]?.chatMessage ?? null,
     };
 

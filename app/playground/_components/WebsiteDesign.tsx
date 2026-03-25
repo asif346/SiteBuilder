@@ -7,7 +7,7 @@ type Props = {
 
 export default function WebsiteDesign({ generatedCode }: Props) {
   return (
-    <div className="p-5 flex-1">
+    <div className="p-5 flex-1 h-[91vh] overflow-auto">
       <div
         className=""
         dangerouslySetInnerHTML={{
