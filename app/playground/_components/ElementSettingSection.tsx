@@ -110,7 +110,7 @@ function ElementSettingSection({ selectedEl, clearSelection }: Props) {
                     <label className='text-sm block'>Text Color</label>
                     <input type='color'
                         className='w-10 h-10 rounded-lg mt-1'
-                        value={selectedEl?.style?.color || '#000000'}
+                        value={selectedEl?.style?.color || '#ffffff'}
                         onChange={(event) => applyStyle('color', event.target.value)}
                     />
                 </div>
