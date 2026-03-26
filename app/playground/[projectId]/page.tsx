@@ -5,6 +5,7 @@ import ChatSection from '../_components/ChatSection'
 import WebsiteDesign from '../_components/WebsiteDesign'
 import { useParams, useSearchParams } from 'next/navigation'
 import axios from 'axios'
+import { toast } from 'sonner'
 
 export type Frame = {
   projectId: string,
@@ -31,9 +32,32 @@ Instructions:
    - All primary components must match the theme color.  
    - Add proper padding and margin for each element.  
    - Components should be independent; do not connect them.  
-   - Use placeholders for all images.  
+   - Use placeholders for all images:  
+       - Light mode: https://community.softr.io/uploads/db9110/original/2X/7/74e6e7e382d0ff5d7773ca9a87e6f6f8817a68a6.jpeg
+       - Dark mode: https://www.cibaky.com/wp-content/uploads/2015/12/placeholder-3.jpg
+       - Add alt tag describing the image prompt.  
+   - Use the following libraries/components where appropriate:  
+       - FontAwesome icons (fa fa-)  
+       - Flowbite UI components: buttons, modals, forms, tables, tabs, alerts, cards, dialogs, dropdowns, accordions, etc.  
+       - Chart.js for charts & graphs  
+       - Swiper.js for sliders/carousels  
+       - Tippy.js for tooltips & popovers  
+   - Include interactive components like modals, dropdowns, and accordions.  
+   - Ensure proper spacing, alignment, hierarchy, and theme consistency.  
+   - Ensure charts are visually appealing and match the theme color.  
+   - Header menu options should be spread out and not connected.  
+   - Do not include broken links.  
+   - Do not add any extra text before or after the HTML code.  
 
-2. If the user input is general text or greetings, respond with a simple message.`
+2. If the user input is **general text or greetings** (e.g., "Hi", "Hello", "How are you?") **or does not explicitly ask to generate code**, then:
+
+   - Respond with a simple, friendly text message instead of generating any code.  
+
+Example:
+
+- User: "Hi" → Response: "Hello! How can I help you today?"  
+- User: "Build a responsive landing page with Tailwind CSS" → Response: [Generate full HTML code as per instructions above]
+`
 
 export default function PlayGround() {
 
@@ -56,6 +80,15 @@ export default function PlayGround() {
 
       setFrameDetail(result.data);
 
+      const designCode = result.data?.designCode || '';
+      if (designCode.includes("```html")) {
+        const start = designCode.indexOf("```html") + 7;
+        const end = designCode.indexOf("```", start);
+        setGeneratedCode(designCode.slice(start, end));
+      } else {
+        setGeneratedCode(designCode);
+      }
+
       if (result.data?.chatMessages?.length === 1) {
         const userMsg = result.data.chatMessages[0].content;
         SendMessage(userMsg);
@@ -70,9 +103,8 @@ export default function PlayGround() {
   const SendMessage = async (userInput: string) => {
     try {
       setLoading(true);
-      setGeneratedCode(''); // ✅ reset code before new generation
+      setGeneratedCode('');
 
-      // ✅ prevent duplicate user message
       setMessages(prev => {
         if (prev[prev.length - 1]?.content === userInput) return prev;
         return [...prev, { role: 'user', content: userInput }];
@@ -80,6 +112,9 @@ export default function PlayGround() {
 
       const result = await fetch('/api/ai-model', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json' // ✅ FIX
+        },
         body: JSON.stringify({
           messages: [{ role: 'user', content: Prompt.replace('{userInput}', userInput) }]
         })
@@ -104,7 +139,6 @@ export default function PlayGround() {
         const chunk = decoder.decode(value, { stream: true });
         aiResponse += chunk;
 
-        // ✅ detect start of code block
         if (!isCode && aiResponse.includes('```html')) {
           isCode = true;
           const startIndex = aiResponse.indexOf('```html') + 7;
@@ -113,15 +147,17 @@ export default function PlayGround() {
           continue;
         }
 
-        // ✅ collect code
         if (isCode) {
           codeBuffer += chunk;
 
-          // ✅ detect end of code block
           if (codeBuffer.includes('```')) {
             const endIndex = codeBuffer.indexOf('```');
             const finalCode = codeBuffer.slice(0, endIndex);
             setGeneratedCode(finalCode);
+
+            // ✅ SAVE ONLY ONCE (FINAL)
+            await SaveGeneratedCode(finalCode);
+
             break;
           } else {
             setGeneratedCode(codeBuffer);
@@ -157,6 +193,20 @@ export default function PlayGround() {
         messages: messages,
         frameId: frameId
       });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const SaveGeneratedCode = async (code: string) => {
+    try {
+      await axios.put('/api/frames', {
+        designCode: code,
+        frameId: frameId,
+        projectId: projectId
+      });
+
+      toast.success('Website is Ready!'); // ✅ now fires once
     } catch (error) {
       console.error(error);
     }
