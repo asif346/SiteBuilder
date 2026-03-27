@@ -1,5 +1,5 @@
 'use client'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   Sidebar,
   SidebarContent,
@@ -14,10 +14,26 @@ import Link from 'next/link'
 import { UserDetailContext } from '@/app/provider'
 import { Progress } from '@/components/ui/progress'
 import { UserButton } from '@clerk/nextjs'
+import axios from 'axios'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export default function AppSidebar() {
   const [projectlist, setProjectlist] = useState<any[]>([]);
   const {userDetail, setUserDetail} = useContext(UserDetailContext);
+  const [loading,setLoading] = useState(false);
+
+  useEffect(()=>{
+    GetProjectsList();
+  },[])
+
+  const GetProjectsList =async()=>{
+    setLoading(true);
+     const result = await axios.get('/api/get-all-projects');
+    console.log(result.data);
+    setProjectlist(result.data);
+    setLoading(false);
+  }
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -32,7 +48,19 @@ export default function AppSidebar() {
       <SidebarContent className='p-2'>
         <SidebarGroup>
           <SidebarGroupLabel>Project</SidebarGroupLabel>
-          {projectlist.length === 0 && <h2 className='text-sm px-2 text-gray-500'>No Project found</h2>}
+          {!loading && projectlist.length === 0 && <h2 className='text-sm px-2 text-gray-500'>No Project found</h2>}
+
+          <div>
+            {(!loading && projectlist.length>0) ? projectlist.map((project:any,index)=>(
+              <Link href={`/playground/${project.projectId}?frame=${project.frameId}`} key={index} className='my-2 hover:bg-secondary p-2 rounded-lg cursor-pointer'>
+                <h2 className='line-clamp-1'>{project?.chats[0].chatMessage[0]?.content}</h2>
+              </Link>
+            )):
+            [1,2,3,4,5].map((_,index)=>(
+              <Skeleton className='w-full h-8 rounded-lg mt-2'/>
+            ))
+            }
+          </div>
         </SidebarGroup>
         <SidebarGroup />
       </SidebarContent>
@@ -42,7 +70,10 @@ export default function AppSidebar() {
             Remaining Credits <span className='font-bold'>{userDetail?.credits}</span>
           </h2>
           <Progress value={33}/>
+          <Link href={'/workspace/pricing'} className='w-full'>
           <Button className='w-full'>Upgrade for more creation</Button>
+          </Link>
+          
           
         </div>
         <div className='flex items-center gap-2'>
