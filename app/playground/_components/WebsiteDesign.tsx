@@ -193,18 +193,16 @@ export default function WebsiteDesign({ generatedCode }: Props) {
           generatedCode={generatedCode}
         />
       </div>
-      <div>
-        {/* Settings Panel */}
-        {selectedElement?.tagName == "IMG" ? (
-          //@ts-ignore
-          <ImageSettingSection selectedEl={selectedElement} />
-        ) : selectedElement ? (
-          <ElementSettingSection
-            selectedEl={selectedElement}
-            clearSelection={() => setSelectedElement(null)}
-          />
-        ) : null}
-      </div>
+
+      {selectedElement?.tagName == "IMG" ? (
+        //@ts-ignore
+        <ImageSettingSection selectedEl={selectedElement} />
+      ) : selectedElement ? (
+        <ElementSettingSection
+          selectedEl={selectedElement}
+          clearSelection={() => setSelectedElement(null)}
+        />
+      ) : null}
     </div>
   );
 }
